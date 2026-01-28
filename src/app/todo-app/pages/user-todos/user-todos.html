@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-base-200">
+  <div class="navbar bg-base-100 shadow-md px-6">
+    <div class="flex-1">
+      <span class="text-xl font-bold italic text-primary">TodoApp</span>
+    </div>
+    <div class="flex-none gap-4 mr-5">
+      <span class="text-sm font-medium hidden sm:inline-block">
+      </span>
+      <button class="btn btn-outline btn-error btn-sm" (click)="onLogout()">
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <div class="p-6 max-w-4xl mx-auto space-y-6">
+    
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-3xl font-bold">Mis Tareas</h1>
+        <p class="text-base-content/60">Gestiona tus pendientes diarios</p>
+      </div>
+      
+      <div class="stats shadow bg-base-100 border border-base-200">
+        <div class="stat py-2 px-4">
+          <div class="stat-title text-xs">Total</div>
+          <div class="stat-value text-xl">{{ totalTasks() }}</div>
+        </div>
+        <div class="stat py-2 px-4">
+          <div class="stat-title text-xs">Hechas</div>
+          <div class="stat-value text-xl text-success">{{ completedTasks() }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+      <div class="card-body p-4">
+        <form [formGroup]="taskForm" (ngSubmit)="addTask()" class="flex flex-col md:flex-row gap-3">
+          <input 
+            type="text" 
+            formControlName="title"
+            placeholder="¿Qué hay que hacer?" 
+            class="input input-bordered flex-1" 
+          />
+          <select formControlName="priority" class="select select-bordered w-full md:w-32">
+            <option value="Baja">Baja</option>
+            <option value="Media">Media</option>
+            <option value="Alta">Alta</option>
+          </select>
+          <button type="submit" class="btn btn-primary" [disabled]="taskForm.invalid">
+            Agregar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto bg-base-100 rounded-xl shadow-sm border border-base-200">
+      <table class="table table-zebra">
+        <thead>
+          <tr class="bg-base-200">
+            <th class="w-12"></th>
+            <th>Tarea</th>
+            <th>Prioridad</th>
+            <th class="text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks(); track task.id) {
+            <tr class="hover">
+              <td>
+                <input 
+                  type="checkbox" 
+                  [checked]="task.completed" 
+                  (change)="toggleTask(task.id)"
+                  class="checkbox checkbox-primary checkbox-sm" 
+                />
+              </td>
+              <td>
+                <span [class.line-through]="task.completed" [class.opacity-50]="task.completed" class="font-medium">
+                  {{ task.title }}
+                </span>
+              </td>
+              <td>
+                <div class="badge badge-sm font-semibold text-white" 
+                  [class.badge-error]="task.priority === 'Alta'"
+                  [class.badge-warning]="task.priority === 'Media'"
+                  [class.badge-info]="task.priority === 'Baja'">
+                  {{ task.priority }}
+                </div>
+              </td>
+              <td class="text-right">
+                <button class="btn btn-ghost btn-xs text-error" (click)="deleteTask(task.id)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center py-8 text-base-content/50 italic">
+                No hay tareas pendientes.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
