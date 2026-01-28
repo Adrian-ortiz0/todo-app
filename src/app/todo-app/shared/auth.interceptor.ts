@@ -7,21 +7,24 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  let authReq = req;
-  if (token) {
-    authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-  }
+  const authReq = token
+    ? req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    : req;
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        console.error('Sesión expirada o no autorizada');
+      if (
+        error.status === 401 &&
+        authService.hasToken() &&
+        !req.url.includes('/login')
+      ) {
         authService.logout();
       }
+
       return throwError(() => error);
     })
   );

@@ -15,11 +15,13 @@ export class AuthService {
   private apiUrl = 'https://localhost:7237/api/auth';
 
   constructor() {
-    const token = this.getToken();
-    if (!token) {
-      this.currentUser.set(null);
-    }
+  const token = this.getToken();
+  const username = localStorage.getItem('username');
+
+  if (token && username) {
+    this.currentUser.set(username);
   }
+}
 
   public currentUser = signal<string | null>(localStorage.getItem('username'));
   isLoggedIn = computed(() => !!this.currentUser());
@@ -68,4 +70,7 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+  hasToken(): boolean {
+  return !!this.getToken();
+}
 }

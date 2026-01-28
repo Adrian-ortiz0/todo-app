@@ -6,11 +6,10 @@ import { Task } from '../../interfaces/tarea.interface';
 
 @Component({
   selector: 'app-user-todos',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './user-todos.html',
 })
-export class UserTodos implements OnInit {
+export class UserTodos {
   private fb = inject(FormBuilder);
   private taskService = inject(TaskService);
   public authService = inject(AuthService);
@@ -22,14 +21,14 @@ export class UserTodos implements OnInit {
 
   taskForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
-    priority: ['Media', [Validators.required]]
+    priority: ['Media', [Validators.required]],
   });
 
-  ngOnInit(): void {
+  constructor() {
     this.loadInitialData();
   }
 
-  async loadInitialData() {
+  private async loadInitialData() {
     try {
       await this.taskService.loadTasks();
     } catch (error) {
@@ -44,7 +43,7 @@ export class UserTodos implements OnInit {
     }
 
     const { title, priority } = this.taskForm.getRawValue();
-    
+
     try {
       await this.taskService.create(title, priority);
       this.taskForm.reset({ priority: 'Media' });
@@ -57,8 +56,11 @@ export class UserTodos implements OnInit {
     const task = this.tasks().find(t => t.id === id);
     if (!task) return;
 
-    const updatedTask: Task = { ...task, completed: !task.completed };
-    
+    const updatedTask: Task = {
+      ...task,
+      completed: !task.completed,
+    };
+
     try {
       await this.taskService.update(updatedTask);
     } catch (error) {

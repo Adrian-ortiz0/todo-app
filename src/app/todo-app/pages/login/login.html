@@ -25,12 +25,10 @@
             class="input input-bordered"
             [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
           />
-          @if (loginForm.get('username')?.invalid &&
-          loginForm.get('username')?.touched) {
+          @if (loginForm.get('email')?.invalid &&
+          loginForm.get('email')?.touched) {
           <label class="label py-1">
-            <span class="label-text-alt text-error"
-              >El usuario es requerido (mín. 3 caracteres)</span
-            >
+            <span class="label-text-alt text-error"> Email inválido </span>
           </label>
           }
         </div>
